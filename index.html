@@ -66,11 +66,60 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px 30px;
+            background: #fff;
+            border-bottom: 2px solid #e9ecef;
+            justify-content: center;
+        }
+
+        .category-btn {
+            padding: 12px 24px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-size: 1em;
+        }
+
+        .category-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .category-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .category-section {
+            padding: 30px;
+        }
+
+        .category-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
-            padding: 30px;
+            margin-bottom: 40px;
         }
 
         .product-card {
@@ -134,10 +183,22 @@
                 font-size: 1.8em;
             }
 
+            .categories {
+                padding: 15px;
+            }
+
+            .category-btn {
+                padding: 10px 18px;
+                font-size: 0.9em;
+            }
+
             .products-grid {
                 grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
                 gap: 15px;
-                padding: 20px;
+            }
+
+            .category-section {
+                padding: 20px 15px;
             }
         }
 
@@ -151,7 +212,7 @@
                 box-shadow: none;
             }
 
-            .search-box {
+            .search-box, .categories {
                 display: none;
             }
 
@@ -172,7 +233,10 @@
             <input type="text" id="searchInput" placeholder="🔍 Buscar producto...">
         </div>
 
-        <div class="products-grid" id="productsGrid"></div>
+        <div class="categories" id="categories"></div>
+
+        <div id="productsContainer"></div>
+        
         <div class="no-results" id="noResults" style="display: none;">
             No se encontraron productos
         </div>
@@ -180,88 +244,162 @@
 
     <script>
         const productos = [
-            { producto: "Cacahuates queso", precio: 13 },
-            { producto: "Cacahuate cantinero", precio: 12.00 },
-            { producto: "Hot nut rojo", precio: 13.00 },
-            { producto: "Español cacahuate", precio: 13.00 },
-            { producto: "Cacahuate japonés", precio: 13.00 },
-            { producto: "Cacahuate salado", precio: 13.00 },
-            { producto: "Haba enchilada", precio: 17.00 },
-            { producto: "Cacahuate enchilado", precio: 13.00 },
-            { producto: "Frito mixto", precio: 14.00 },
-            { producto: "Cacahuate habanero", precio: 13.00 },
-            { producto: "Cacahuate con ajo", precio: 14.00 },
-            { producto: "Haba sin cáscara", precio: 18 },
-            { producto: "Tostado tipo cacahuate", precio: 12.00 },
-            { producto: "Cacahuate garapiñado", precio: 12.00 },
-            { producto: "Gomitas surtidas", precio: 26.00 },
-            { producto: "Arándano enchilado", precio: 21.00 },
-            { producto: "Fruta mixta picada", precio: 21.00 },
-            { producto: "Nuez de la india con sal", precio: 43.00 },
-            { producto: "Pistache", precio: 38.00 },
-            { producto: "Nuez mitad", precio: 35.00 },
-            { producto: "Uva pasa nacional", precio: 14.00 },
-            { producto: "Ciruela pasa c/hueso", precio: 17.00 },
-            { producto: "Nuez garapiñada", precio: 35.00 },
-            { producto: "Chips plátano", precio: 25.00 },
-            { producto: "Semilla tostada", precio: 19.00 },
-            { producto: "Botana mixta", precio: 25.00 },
-            { producto: "Almendra entera natural", precio: 31.00 },
-            { producto: "Manguitos goma", precio: 17.00 },
-            { producto: "Lombriz neón", precio: 17.00 },
-            { producto: "Ositos enchilados", precio: 17.00 },
-            { producto: "Caramelo acidito", precio: 19.00 },
-            { producto: "Moritas del bosque", precio: 20.00 },
-            { producto: "Picafresa", precio: 23.00 },
-            { producto: "Mangomita", precio: 17.00 },
-            { producto: "Arándano cimarrón", precio: 20.00 },
-            { producto: "Cherry sours", precio: 18.00 },
-            { producto: "Lombrices gomita", precio: 17.00 },
-            { producto: "Gotitas lucky", precio: 17.00 },
-            { producto: "Ositos gomita", precio: 17.00 },
-            { producto: "Naranja enchilada", precio: 17.00 },
-            { producto: "Rebanada sandía", precio: 20.00 },
-            { producto: "Aros durazno", precio: 17.00 },
-            { producto: "Frutitas gomita", precio: 17.00 },
-            { producto: "Tiburón gomita", precio: 17.00 },
-            { producto: "Pingüinos gomita", precio: 20.00 },
-            { producto: "Dientes", precio: 20.00 }
+            // Cacahuates
+            { producto: "Cacahuates queso", precio: 13.00, categoria: "Cacahuates" },
+            { producto: "Cacahuate cantinero", precio: 12.00, categoria: "Cacahuates" },
+            { producto: "Hot nut rojo", precio: 13.00, categoria: "Cacahuates" },
+            { producto: "Cacahuate japonés", precio: 13.00, categoria: "Cacahuates" },
+            { producto: "Cacahuate salado", precio: 13.00, categoria: "Cacahuates" },
+            { producto: "Cacahuate enchilado", precio: 13.00, categoria: "Cacahuates" },
+            { producto: "Frito mixto", precio: 14.00, categoria: "Cacahuates" },
+            { producto: "Cacahuate habanero", precio: 13.00, categoria: "Cacahuates" },
+            { producto: "Cacahuate con ajo", precio: 14.00, categoria: "Cacahuates" },
+            { producto: "Cacahuate garapiñado", precio: 12.00, categoria: "Cacahuates" },
+            { producto: "Español cacahuate", precio: 13.00, categoria: "Cacahuates" },
+            { producto: "Tostado tipo cacahuate", precio: 12.00, categoria: "Cacahuates" },
+            
+            // Botanas Mixtas
+            { producto: "Haba enchilada", precio: 17.00, categoria: "Botanas Mixtas" },
+            { producto: "Haba sin cáscara", precio: 18, categoria: "Botanas Mixtas" },
+            { producto: "Chips plátano", precio: 25.00, categoria: "Botanas Mixtas" },
+            { producto: "Semilla tostada", precio: 19.00, categoria: "Botanas Mixtas" },
+            { producto: "Botana mixta", precio: 25.00, categoria: "Botanas Mixtas" },
+            
+            // Nueces y Frutos Secos
+            { producto: "Nuez de la india con sal", precio: 43.00, categoria: "Nueces y Frutos Secos" },
+            { producto: "Pistache", precio: 38.00, categoria: "Nueces y Frutos Secos" },
+            { producto: "Nuez mitad", precio: 35.00, categoria: "Nueces y Frutos Secos" },
+            { producto: "Nuez garapiñada", precio: 35.00, categoria: "Nueces y Frutos Secos" },
+            { producto: "Almendra entera natural", precio: 31.00, categoria: "Nueces y Frutos Secos" },
+            
+            // Frutas Deshidratadas
+            { producto: "Arándano enchilado", precio: 21.00, categoria: "Frutas Deshidratadas" },
+            { producto: "Fruta mixta picada", precio: 21.00, categoria: "Frutas Deshidratadas" },
+            { producto: "Uva pasa nacional", precio: 14.00, categoria: "Frutas Deshidratadas" },
+            { producto: "Ciruela pasa c/hueso", precio: 17.00, categoria: "Frutas Deshidratadas" },
+            { producto: "Arándano cimarrón", precio: 20.00, categoria: "Frutas Deshidratadas" },
+            { producto: "Naranja enchilada", precio: 17.00, categoria: "Frutas Deshidratadas" },
+            
+            // Gomitas y Dulces
+            { producto: "Gomitas surtidas", precio: 26.00, categoria: "Gomitas y Dulces" },
+            { producto: "Manguitos goma", precio: 17.00, categoria: "Gomitas y Dulces" },
+            { producto: "Lombriz neón", precio: 17.00, categoria: "Gomitas y Dulces" },
+            { producto: "Ositos enchilados", precio: 17.00, categoria: "Gomitas y Dulces" },
+            { producto: "Caramelo acidito", precio: 19.00, categoria: "Gomitas y Dulces" },
+            { producto: "Moritas del bosque", precio: 20.00, categoria: "Gomitas y Dulces" },
+            { producto: "Picafresa", precio: 23.00, categoria: "Gomitas y Dulces" },
+            { producto: "Mangomita", precio: 17.00, categoria: "Gomitas y Dulces" },
+            { producto: "Cherry sours", precio: 18.00, categoria: "Gomitas y Dulces" },
+            { producto: "Lombrices gomita", precio: 17.00, categoria: "Gomitas y Dulces" },
+            { producto: "Gotitas lucky", precio: 17.00, categoria: "Gomitas y Dulces" },
+            { producto: "Ositos gomita", precio: 17.00, categoria: "Gomitas y Dulces" },
+            { producto: "Rebanada sandía", precio: 20.00, categoria: "Gomitas y Dulces" },
+            { producto: "Aros durazno", precio: 17.00, categoria: "Gomitas y Dulces" },
+            { producto: "Frutitas gomita", precio: 17.00, categoria: "Gomitas y Dulces" },
+            { producto: "Tiburón gomita", precio: 17.00, categoria: "Gomitas y Dulces" },
+            { producto: "Pingüinos gomita", precio: 20.00, categoria: "Gomitas y Dulces" },
+            { producto: "Dientes", precio: 20.00, categoria: "Gomitas y Dulces" }
         ];
 
-        function renderProducts(filteredProducts) {
-            const grid = document.getElementById('productsGrid');
-            const noResults = document.getElementById('noResults');
+        const categoryIcons = {
+            "Cacahuates": "🥜",
+            "Botanas Mixtas": "🍿",
+            "Nueces y Frutos Secos": "🌰",
+            "Frutas Deshidratadas": "🍇",
+            "Gomitas y Dulces": "🍬"
+        };
 
-            if (filteredProducts.length === 0) {
-                grid.style.display = 'none';
+        let activeCategory = "Todos";
+        let searchTerm = "";
+
+        function getCategories() {
+            const cats = [...new Set(productos.map(p => p.categoria))];
+            return ["Todos", ...cats.sort()];
+        }
+
+        function renderCategories() {
+            const categoriesDiv = document.getElementById('categories');
+            const categories = getCategories();
+            
+            categoriesDiv.innerHTML = categories.map(cat => `
+                <button class="category-btn ${cat === activeCategory ? 'active' : ''}" 
+                        onclick="filterByCategory('${cat}')">
+                    ${categoryIcons[cat] || '📦'} ${cat}
+                </button>
+            `).join('');
+        }
+
+        function filterByCategory(category) {
+            activeCategory = category;
+            renderCategories();
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const container = document.getElementById('productsContainer');
+            const noResults = document.getElementById('noResults');
+            
+            let filtered = productos;
+            
+            // Filtrar por búsqueda
+            if (searchTerm) {
+                filtered = filtered.filter(p => 
+                    p.producto.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+            }
+            
+            // Filtrar por categoría
+            if (activeCategory !== "Todos") {
+                filtered = filtered.filter(p => p.categoria === activeCategory);
+            }
+
+            if (filtered.length === 0) {
+                container.style.display = 'none';
                 noResults.style.display = 'block';
                 return;
             }
 
-            grid.style.display = 'grid';
+            container.style.display = 'block';
             noResults.style.display = 'none';
             
-            grid.innerHTML = filteredProducts.map(p => `
-                <div class="product-card">
-                    <div class="product-name">${p.producto}</div>
-                    <div class="product-info">
-                        <div class="product-weight">100g</div>
-                        <div class="product-price">$${p.precio.toFixed(2)}</div>
+            // Agrupar por categoría
+            const groupedProducts = {};
+            filtered.forEach(p => {
+                if (!groupedProducts[p.categoria]) {
+                    groupedProducts[p.categoria] = [];
+                }
+                groupedProducts[p.categoria].push(p);
+            });
+
+            // Renderizar por categoría
+            container.innerHTML = Object.keys(groupedProducts).sort().map(categoria => `
+                <div class="category-section">
+                    <h2 class="category-title">
+                        ${categoryIcons[categoria] || '📦'} ${categoria}
+                    </h2>
+                    <div class="products-grid">
+                        ${groupedProducts[categoria].map(p => `
+                            <div class="product-card">
+                                <div class="product-name">${p.producto}</div>
+                                <div class="product-info">
+                                    <div class="product-weight">100g</div>
+                                    <div class="product-price">$${p.precio.toFixed(2)}</div>
+                                </div>
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
             `).join('');
         }
 
-        // Renderizar todos los productos al inicio
-        renderProducts(productos);
+        // Inicializar
+        renderCategories();
+        renderProducts();
 
-        // Búsqueda en tiempo real
+        // Búsqueda
         document.getElementById('searchInput').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const filtered = productos.filter(p => 
-                p.producto.toLowerCase().includes(searchTerm)
-            );
-            renderProducts(filtered);
+            searchTerm = e.target.value;
+            renderProducts();
         });
     </script>
 </body>
