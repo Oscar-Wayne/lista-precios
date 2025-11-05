@@ -137,6 +137,11 @@
             border-color: #667eea;
         }
 
+        .product-card.selected {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
         .product-name {
             font-size: 1.1em;
             font-weight: bold;
@@ -169,6 +174,179 @@
             font-size: 1.8em;
             font-weight: bold;
             color: #764ba2;
+        }
+
+        .calculator-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+            z-index: 1000;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .calculator-panel.active {
+            transform: translateY(0);
+        }
+
+        .calculator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .calculator-header h3 {
+            font-size: 1.5em;
+            color: #333;
+        }
+
+        .close-calc {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .calculator-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .selected-products {
+            margin-bottom: 20px;
+        }
+
+        .selected-product {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .selected-product-info {
+            flex: 1;
+        }
+
+        .selected-product-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .weight-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .weight-input input {
+            width: 100px;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .weight-input button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .remove-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .total-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .total-section h4 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+
+        .total-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .total-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.1em;
+        }
+
+        .total-final {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.8em;
+            font-weight: bold;
+            padding-top: 15px;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .toggle-calc-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-calc-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+        }
+
+        .cart-badge {
+            background: white;
+            color: #10b981;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: bold;
         }
 
         .no-results {
@@ -242,6 +420,29 @@
         </div>
     </div>
 
+    <button class="toggle-calc-btn" id="toggleCalcBtn" onclick="toggleCalculator()">
+        🧮 Calculadora
+        <span class="cart-badge" id="cartBadge">0</span>
+    </button>
+
+    <div class="calculator-panel" id="calculatorPanel">
+        <div class="calculator-header">
+            <h3>🧮 Calculadora de Precios</h3>
+            <button class="close-calc" onclick="toggleCalculator()">Cerrar</button>
+        </div>
+        <div class="calculator-content">
+            <div class="selected-products" id="selectedProducts"></div>
+            <div class="total-section">
+                <h4>📊 Resumen Total</h4>
+                <div class="total-items" id="totalItems"></div>
+                <div class="total-final">
+                    <span>TOTAL:</span>
+                    <span id="totalFinal">$0.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const productos = [
             // Cacahuates
@@ -260,7 +461,7 @@
             
             // Botanas Mixtas
             { producto: "Haba enchilada", precio: 17.00, categoria: "Botanas Mixtas" },
-            { producto: "Haba sin cáscara", precio: 18, categoria: "Botanas Mixtas" },
+            { producto: "Haba sin cáscara", precio: 18.00, categoria: "Botanas Mixtas" },
             { producto: "Chips plátano", precio: 25.00, categoria: "Botanas Mixtas" },
             { producto: "Semilla tostada", precio: 19.00, categoria: "Botanas Mixtas" },
             { producto: "Botana mixta", precio: 25.00, categoria: "Botanas Mixtas" },
@@ -311,6 +512,7 @@
 
         let activeCategory = "Todos";
         let searchTerm = "";
+        let selectedProducts = [];
 
         function getCategories() {
             const cats = [...new Set(productos.map(p => p.categoria))];
@@ -333,6 +535,97 @@
             activeCategory = category;
             renderCategories();
             renderProducts();
+        }
+
+        function toggleProductSelection(producto) {
+            const index = selectedProducts.findIndex(p => p.nombre === producto.producto);
+            
+            if (index === -1) {
+                selectedProducts.push({
+                    nombre: producto.producto,
+                    precioBase: producto.precio,
+                    gramos: 100,
+                    total: producto.precio
+                });
+            } else {
+                selectedProducts.splice(index, 1);
+            }
+            
+            updateCalculator();
+            renderProducts();
+        }
+
+        function updateProductWeight(index, gramos) {
+            if (gramos < 50) gramos = 50;
+            selectedProducts[index].gramos = gramos;
+            selectedProducts[index].total = (selectedProducts[index].precioBase * gramos) / 100;
+            updateCalculator();
+        }
+
+        function removeProduct(index) {
+            selectedProducts.splice(index, 1);
+            updateCalculator();
+            renderProducts();
+        }
+
+        function updateCalculator() {
+            const selectedProductsDiv = document.getElementById('selectedProducts');
+            const totalItemsDiv = document.getElementById('totalItems');
+            const totalFinalSpan = document.getElementById('totalFinal');
+            const cartBadge = document.getElementById('cartBadge');
+
+            cartBadge.textContent = selectedProducts.length;
+
+            if (selectedProducts.length === 0) {
+                selectedProductsDiv.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No hay productos seleccionados. Haz clic en un producto para agregarlo.</p>';
+                totalItemsDiv.innerHTML = '';
+                totalFinalSpan.textContent = '$0.00';
+                return;
+            }
+
+            selectedProductsDiv.innerHTML = selectedProducts.map((p, index) => `
+                <div class="selected-product">
+                    <div class="selected-product-info">
+                        <div class="selected-product-name">${p.nombre}</div>
+                        <div class="weight-input">
+                            <button onclick="updateProductWeight(${index}, ${p.gramos} - 50)">-</button>
+                            <input type="number" value="${p.gramos}" min="50" step="50" 
+                                   onchange="updateProductWeight(${index}, parseInt(this.value))">
+                            <span>g</span>
+                            <button onclick="updateProductWeight(${index}, ${p.gramos} + 50)">+</button>
+                        </div>
+                        <div style="color: #667eea; font-weight: bold;">
+                            ${p.precioBase.toFixed(2)}/100g × ${p.gramos}g = ${p.total.toFixed(2)}
+                        </div>
+                    </div>
+                    <button class="remove-btn" onclick="removeProduct(${index})">✕</button>
+                </div>
+            `).join('');
+
+            const totalGramos = selectedProducts.reduce((sum, p) => sum + p.gramos, 0);
+            const totalPrecio = selectedProducts.reduce((sum, p) => sum + p.total, 0);
+
+            totalItemsDiv.innerHTML = `
+                <div class="total-item">
+                    <span>Productos:</span>
+                    <span>${selectedProducts.length}</span>
+                </div>
+                <div class="total-item">
+                    <span>Peso Total:</span>
+                    <span>${totalGramos}g</span>
+                </div>
+            `;
+
+            totalFinalSpan.textContent = `${totalPrecio.toFixed(2)}`;
+        }
+
+        function toggleCalculator() {
+            const panel = document.getElementById('calculatorPanel');
+            panel.classList.toggle('active');
+        }
+
+        function isProductSelected(productName) {
+            return selectedProducts.some(p => p.nombre === productName);
         }
 
         function renderProducts() {
@@ -379,11 +672,12 @@
                     </h2>
                     <div class="products-grid">
                         ${groupedProducts[categoria].map(p => `
-                            <div class="product-card">
+                            <div class="product-card ${isProductSelected(p.producto) ? 'selected' : ''}" 
+                                 onclick="toggleProductSelection(${JSON.stringify(p).replace(/"/g, '&quot;')})">
                                 <div class="product-name">${p.producto}</div>
                                 <div class="product-info">
                                     <div class="product-weight">100g</div>
-                                    <div class="product-price">$${p.precio.toFixed(2)}</div>
+                                    <div class="product-price">${p.precio.toFixed(2)}</div>
                                 </div>
                             </div>
                         `).join('')}
