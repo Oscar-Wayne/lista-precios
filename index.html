@@ -11,6 +11,27 @@
             box-sizing: border-box;
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
         body {
             font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -25,6 +46,7 @@
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
+            animation: fadeIn 0.5s ease-out;
         }
 
         .header {
@@ -84,8 +106,28 @@
             border-radius: 25px;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             font-size: 1em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .category-btn:hover::before {
+            width: 300px;
+            height: 300px;
         }
 
         .category-btn:hover {
@@ -98,6 +140,11 @@
         .category-btn.active {
             background: #667eea;
             color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .category-btn:active {
+            transform: translateY(0);
         }
 
         .category-section {
@@ -127,19 +174,91 @@
             border: 2px solid #e9ecef;
             border-radius: 15px;
             padding: 20px;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .product-card:hover::after {
+            opacity: 1;
         }
 
         .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
             border-color: #667eea;
         }
 
         .product-card.selected {
             border-color: #10b981;
-            background: #f0fdf4;
+            background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+            animation: pulse 0.5s ease;
+        }
+
+        .product-card.selected::before {
+            content: '✓';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #10b981;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            z-index: 1;
+        }
+
+        .product-card:active {
+            transform: translateY(-4px);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+
+        .product-image-placeholder {
+            width: 100%;
+            height: 150px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image-placeholder {
+            transform: scale(1.05);
         }
 
         .product-name {
@@ -182,10 +301,10 @@
             left: 0;
             right: 0;
             background: white;
-            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.3);
             padding: 20px;
             transform: translateY(100%);
-            transition: transform 0.3s;
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             z-index: 1000;
             max-height: 80vh;
             overflow-y: auto;
@@ -193,6 +312,7 @@
 
         .calculator-panel.active {
             transform: translateY(0);
+            animation: slideUp 0.4s ease-out;
         }
 
         .calculator-header {
@@ -217,6 +337,16 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .close-calc:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+
+        .close-calc:active {
+            transform: scale(0.95);
         }
 
         .calculator-content {
@@ -233,9 +363,17 @@
             justify-content: space-between;
             align-items: center;
             padding: 15px;
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             border-radius: 10px;
             margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .selected-product:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .selected-product-info {
@@ -270,6 +408,16 @@
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .weight-input button:hover {
+            background: #5568d3;
+            transform: scale(1.1);
+        }
+
+        .weight-input button:active {
+            transform: scale(0.95);
         }
 
         .remove-btn {
@@ -280,6 +428,16 @@
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .remove-btn:hover {
+            background: #dc2626;
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        .remove-btn:active {
+            transform: scale(0.95) rotate(90deg);
         }
 
         .total-section {
@@ -332,13 +490,37 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .whatsapp-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .whatsapp-btn:hover::before {
+            width: 400px;
+            height: 400px;
         }
 
         .whatsapp-btn:hover {
             background: #20BA5A;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.5);
+        }
+
+        .whatsapp-btn:active {
+            transform: translateY(-1px);
         }
 
         .toggle-calc-btn {
@@ -358,11 +540,16 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            transition: all 0.3s ease;
         }
 
         .toggle-calc-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.6);
+        }
+
+        .toggle-calc-btn:active {
+            transform: translateY(-1px) scale(1.02);
         }
 
         .cart-badge {
@@ -371,6 +558,7 @@
             padding: 5px 10px;
             border-radius: 20px;
             font-weight: bold;
+            animation: pulse 0.5s ease infinite;
         }
 
         .no-results {
@@ -474,60 +662,60 @@
     <script>
         const productos = [
             // Cacahuates
-            { producto: "Cacahuates queso", precio: 13.00, categoria: "Cacahuates" },
-            { producto: "Cacahuate cantinero", precio: 12.00, categoria: "Cacahuates" },
-            { producto: "Hot nut rojo", precio: 13.00, categoria: "Cacahuates" },
-            { producto: "Cacahuate japonés", precio: 13.00, categoria: "Cacahuates" },
-            { producto: "Cacahuate salado", precio: 13.00, categoria: "Cacahuates" },
-            { producto: "Cacahuate enchilado", precio: 13.00, categoria: "Cacahuates" },
-            { producto: "Frito mixto", precio: 14.00, categoria: "Cacahuates" },
-            { producto: "Cacahuate habanero", precio: 13.00, categoria: "Cacahuates" },
-            { producto: "Cacahuate con ajo", precio: 14.00, categoria: "Cacahuates" },
-            { producto: "Cacahuate garapiñado", precio: 12.00, categoria: "Cacahuates" },
-            { producto: "Español cacahuate", precio: 13.00, categoria: "Cacahuates" },
-            { producto: "Tostado tipo cacahuate", precio: 12.00, categoria: "Cacahuates" },
+            { producto: "Cacahuates queso", precio: 13.00, categoria: "Cacahuates", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985918/queso-c_zqgvtj.jpg" },
+            { producto: "Cacahuate cantinero", precio: 12.00, categoria: "Cacahuates", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985963/super-cantinero_hs1gbp.jpg" },
+            { producto: "Hot nut rojo", precio: 13.00, categoria: "Cacahuates", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985860/hotnut_ovz8yw.jpg" },
+            { producto: "Cacahuate japonés", precio: 13.00, categoria: "Cacahuates", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985860/japo_zd6bko.jpg" },
+            { producto: "Cacahuate salado", precio: 13.00, categoria: "Cacahuates", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985962/salado_vmg5hz.jpg" },
+            { producto: "Cacahuate enchilado", precio: 13.00, categoria: "Cacahuates", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985861/enchilado_toyrzx.jpg" },
+            { producto: "Frito mixto", precio: 14.00, categoria: "Cacahuates", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985859/contodo_othnah.jpg" },
+            { producto: "Cacahuate habanero", precio: 13.00, categoria: "Cacahuates", imagen: "🔥" },
+            { producto: "Cacahuate con ajo", precio: 14.00, categoria: "Cacahuates", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985859/cacah-c-ajo_ajsidv.jpg" },
+            { producto: "Cacahuate garapiñado", precio: 12.00, categoria: "Cacahuates", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985859/garampi%C3%B1ado_m6uena.jpg" },
+            { producto: "Español cacahuate", precio: 13.00, categoria: "Cacahuates", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985860/espa%C3%B1ol-virginia_uhen6o.jpg" },
+            { producto: "Tostado tipo cacahuate", precio: 12.00, categoria: "Cacahuates", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985962/tostado_eaue6z.jpg" },
             
             // Botanas Mixtas
-            { producto: "Haba enchilada", precio: 17.00, categoria: "Botanas Mixtas" },
-            { producto: "Haba sin cáscara", precio: 18.00, categoria: "Botanas Mixtas" },
-            { producto: "Chips plátano", precio: 25.00, categoria: "Botanas Mixtas" },
-            { producto: "Semilla tostada", precio: 19.00, categoria: "Botanas Mixtas" },
-            { producto: "Botana mixta", precio: 25.00, categoria: "Botanas Mixtas" },
+            { producto: "Haba enchilada", precio: 17.00, categoria: "Botanas Mixtas", imagen: "🌶️" },
+            { producto: "Haba sin cáscara", precio: 18.00, categoria: "Botanas Mixtas", imagen: "🫘" },
+            { producto: "Chips plátano", precio: 25.00, categoria: "Botanas Mixtas", imagen: "🍌" },
+            { producto: "Semilla tostada", precio: 19.00, categoria: "Botanas Mixtas", imagen: "🌻" },
+            { producto: "Botana mixta", precio: 25.00, categoria: "Botanas Mixtas", imagen: "🍿" },
             
             // Nueces y Frutos Secos
-            { producto: "Nuez de la india con sal", precio: 43.00, categoria: "Nueces y Frutos Secos" },
-            { producto: "Pistache", precio: 38.00, categoria: "Nueces y Frutos Secos" },
-            { producto: "Nuez mitad", precio: 35.00, categoria: "Nueces y Frutos Secos" },
-            { producto: "Nuez garapiñada", precio: 35.00, categoria: "Nueces y Frutos Secos" },
-            { producto: "Almendra entera natural", precio: 31.00, categoria: "Nueces y Frutos Secos" },
+            { producto: "Nuez de la india con sal", precio: 43.00, categoria: "Nueces y Frutos Secos", imagen: "🥜" },
+            { producto: "Pistache", precio: 38.00, categoria: "Nueces y Frutos Secos", imagen: "🌰" },
+            { producto: "Nuez mitad", precio: 35.00, categoria: "Nueces y Frutos Secos", imagen: "🌰" },
+            { producto: "Nuez garapiñada", precio: 35.00, categoria: "Nueces y Frutos Secos", imagen: "🍬" },
+            { producto: "Almendra entera natural", precio: 31.00, categoria: "Nueces y Frutos Secos", imagen: "🌰" },
             
             // Frutas Deshidratadas
-            { producto: "Arándano enchilado", precio: 21.00, categoria: "Frutas Deshidratadas" },
-            { producto: "Fruta mixta picada", precio: 21.00, categoria: "Frutas Deshidratadas" },
-            { producto: "Uva pasa nacional", precio: 14.00, categoria: "Frutas Deshidratadas" },
-            { producto: "Ciruela pasa c/hueso", precio: 17.00, categoria: "Frutas Deshidratadas" },
-            { producto: "Arándano cimarrón", precio: 20.00, categoria: "Frutas Deshidratadas" },
-            { producto: "Naranja enchilada", precio: 17.00, categoria: "Frutas Deshidratadas" },
+            { producto: "Arándano enchilado", precio: 21.00, categoria: "Frutas Deshidratadas", imagen: "🫐" },
+            { producto: "Fruta mixta picada", precio: 21.00, categoria: "Frutas Deshidratadas", imagen: "🍇" },
+            { producto: "Uva pasa nacional", precio: 14.00, categoria: "Frutas Deshidratadas", imagen: "�葡" },
+            { producto: "Ciruela pasa c/hueso", precio: 17.00, categoria: "Frutas Deshidratadas", imagen: "🍑" },
+            { producto: "Arándano cimarrón", precio: 20.00, categoria: "Frutas Deshidratadas", imagen: "🫐" },
+            { producto: "Naranja enchilada", precio: 17.00, categoria: "Frutas Deshidratadas", imagen: "🍊" },
             
             // Gomitas y Dulces
-            { producto: "Gomitas surtidas", precio: 26.00, categoria: "Gomitas y Dulces" },
-            { producto: "Manguitos goma", precio: 17.00, categoria: "Gomitas y Dulces" },
-            { producto: "Lombriz neón", precio: 17.00, categoria: "Gomitas y Dulces" },
-            { producto: "Ositos enchilados", precio: 17.00, categoria: "Gomitas y Dulces" },
-            { producto: "Caramelo acidito", precio: 19.00, categoria: "Gomitas y Dulces" },
-            { producto: "Moritas del bosque", precio: 20.00, categoria: "Gomitas y Dulces" },
-            { producto: "Picafresa", precio: 23.00, categoria: "Gomitas y Dulces" },
-            { producto: "Mangomita", precio: 17.00, categoria: "Gomitas y Dulces" },
-            { producto: "Cherry sours", precio: 18.00, categoria: "Gomitas y Dulces" },
-            { producto: "Lombrices gomita", precio: 17.00, categoria: "Gomitas y Dulces" },
-            { producto: "Gotitas lucky", precio: 17.00, categoria: "Gomitas y Dulces" },
-            { producto: "Ositos gomita", precio: 17.00, categoria: "Gomitas y Dulces" },
-            { producto: "Rebanada sandía", precio: 20.00, categoria: "Gomitas y Dulces" },
-            { producto: "Aros durazno", precio: 17.00, categoria: "Gomitas y Dulces" },
-            { producto: "Frutitas gomita", precio: 17.00, categoria: "Gomitas y Dulces" },
-            { producto: "Tiburón gomita", precio: 17.00, categoria: "Gomitas y Dulces" },
-            { producto: "Pingüinos gomita", precio: 20.00, categoria: "Gomitas y Dulces" },
-            { producto: "Dientes", precio: 20.00, categoria: "Gomitas y Dulces" }
+            { producto: "Gomitas surtidas", precio: 26.00, categoria: "Gomitas y Dulces", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985860/gomitas_surtidas_aacrm2.jpg" },
+            { producto: "Manguitos goma", precio: 17.00, categoria: "Gomitas y Dulces", imagen: "🥭" },
+            { producto: "Lombriz neón", precio: 17.00, categoria: "Gomitas y Dulces", imagen: "🐛" },
+            { producto: "Ositos enchilados", precio: 17.00, categoria: "Gomitas y Dulces", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985887/ositos-ench_r4x7cx.jpg" },
+            { producto: "Caramelo acidito", precio: 19.00, categoria: "Gomitas y Dulces", imagen: "🍋" },
+            { producto: "Moritas del bosque", precio: 20.00, categoria: "Gomitas y Dulces", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985877/moritas_v0wnnx.jpg" },
+            { producto: "Picafresa", precio: 23.00, categoria: "Gomitas y Dulces", imagen: "🍓" },
+            { producto: "Mangomita", precio: 17.00, categoria: "Gomitas y Dulces", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985861/mangos-ch_t2kxjm.jpg" },
+            { producto: "Cherry sours", precio: 18.00, categoria: "Gomitas y Dulces", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985859/cherrys_lkfmzs.jpg" },
+            { producto: "Lombrices gomita", precio: 17.00, categoria: "Gomitas y Dulces", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985861/lombrices_iz9snc.jpg" },
+            { producto: "Gotitas lucky", precio: 17.00, categoria: "Gomitas y Dulces", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985860/gotitas_uknycl.jpg" },
+            { producto: "Ositos gomita", precio: 17.00, categoria: "Gomitas y Dulces", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985897/ositos-gummy_jbaeau.jpg" },
+            { producto: "Rebanada sandía", precio: 20.00, categoria: "Gomitas y Dulces", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985928/rebanada-sandia_sgzms8.jpg" },
+            { producto: "Aros durazno", precio: 17.00, categoria: "Gomitas y Dulces", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985859/aros_fu0oe4.jpg" },
+            { producto: "Frutitas gomita", precio: 17.00, categoria: "Gomitas y Dulces", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985859/frutitas_qi019s.jpg" },
+            { producto: "Tiburón gomita", precio: 17.00, categoria: "Gomitas y Dulces", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985962/tiburones_gnqabp.jpg" },
+            { producto: "Pingüinos gomita", precio: 20.00, categoria: "Gomitas y Dulces", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985907/pingu_kves47.jpg" },
+            { producto: "Dientes", precio: 20.00, categoria: "Gomitas y Dulces", imagen: "https://res.cloudinary.com/dsurssqyi/image/upload/v1762985859/dientes_hv0vq5.jpg" }
         ];
 
         const categoryIcons = {
@@ -688,7 +876,7 @@
             
             // Crear el enlace de WhatsApp
             // Cambia este número por el tuyo (formato internacional sin +)
-            const numeroWhatsApp = "5218711351671"; // CAMBIA ESTE NÚMERO
+            const numeroWhatsApp = "5215512345678"; // CAMBIA ESTE NÚMERO
             const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensajeCodificado}`;
 
             // Abrir WhatsApp
@@ -740,11 +928,16 @@
                     <div class="products-grid">
                         ${groupedProducts[categoria].map(p => `
                             <div class="product-card ${isProductSelected(p.producto) ? 'selected' : ''}" 
-                                 onclick="toggleProductSelection(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                                 onclick="toggleProductSelection(${JSON.stringify(p)})">
+                                ${p.imagen.startsWith('http') ? `
+                                    <img src="${p.imagen}" alt="${p.producto}" class="product-image">
+                                ` : `
+                                    <div class="product-image-placeholder">${p.imagen}</div>
+                                `}
                                 <div class="product-name">${p.producto}</div>
                                 <div class="product-info">
                                     <div class="product-weight">100g</div>
-                                    <div class="product-price">${p.precio.toFixed(2)}</div>
+                                    <div class="product-price">$${p.precio.toFixed(2)}</div>
                                 </div>
                             </div>
                         `).join('')}
